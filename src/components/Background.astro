@@ -1,0 +1,26 @@
+---
+const lines = new Array(20).fill(0);
+---
+
+<div class="h-full justify-center flex">
+  <div class="flex absolute top-[35vh]">
+    <div
+      class="rounded bg-[#ef4966]/50 rotate-[-20deg] w-[35vw] h-[25vh] blur-[140px]">
+    </div>
+    <div
+      class="rounded bg-[#fca96a]/60 rotate-[20deg] w-[35vw] h-[25vh] blur-[140px]">
+    </div>
+  </div>
+  <div
+    class="rounded bg-[#ef4966]/50 rotate-[20deg] w-[35vw] h-[10vh] blur-[100px] absolute -bottom-16 left-[15vw]">
+  </div>
+  <div class="flex justify-between space-x-[4vw] absolute h-full">
+    {lines.map((item) => <div class="bg-black h-[130vh] blur-sm w-[5px]" />)}
+  </div>
+  <div
+    class="bg-[#ef4966]/30 rotate-[-20deg] rounded-br-full size-[25vw] blur-[200px] -top-20 left-0 absolute">
+  </div>
+  <div
+    class="bg-[#ef4966]/30 rotate-[-20deg] rounded-br-full size-[25vw] blur-[200px] -top-20 right-0 absolute">
+  </div>
+</div>
