@@ -45,7 +45,7 @@
 
     try {
       // 1️⃣ Pedimos al backend la signed URL
-      const res = await fetch("http://localhost:3000/generate-upload-url", {
+      const res = await fetch("https://storage-r2.vercel.app/generate-upload-url", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fileType: file.type, fileName: file.name })
