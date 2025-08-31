@@ -1,20 +1,75 @@
+---
+/* Esto es un componente Astro o dentro de un .astro page */
+---
+
 <header class="flex justify-between w-full h-[13vh] px-8 items-center">
   <a class="text-2xl font-bold flex items-center" href="/">
     <img src="icon/icon.ico" class="w-14" />
-    <span
-      class="bg-gradient-to-r from-[#fca96a] via-[#fca96a] to-[#ef4966] bg-clip-text font-extrabold text-transparent">
+    <span class="bg-gradient-to-r from-[#fca96a] via-[#fca96a] to-[#ef4966] bg-clip-text font-extrabold text-transparent">
       BarQLink
     </span>
   </a>
-  <div
-    class="bg-white/5 shadow-[inset_0_0_5px_rgba(255,255,255,0.5)] flex space-x-10 rounded-2xl px-7 py-3.5">
+  <div class="bg-white/5 shadow-[inset_0_0_5px_rgba(255,255,255,0.5)] flex space-x-10 rounded-2xl px-7 py-3.5">
     <a> Inicio </a>
     <a> Contactos </a>
     <a> Precios </a>
     <a> FAQ </a>
   </div>
-  <a
-    class="bg-white/5 shadow-[inset_0_0_5px_rgba(255,255,255,0.5)] rounded-xl px-5 py-2">
+  <a class="bg-white/5 shadow-[inset_0_0_5px_rgba(255,255,255,0.5)] rounded-xl px-5 py-2">
     Contacto
   </a>
 </header>
+
+<section class="p-8">
+  <h2 class="text-xl font-bold mb-4">Subir archivo a R2</h2>
+  <input type="file" id="fileInput" />
+  <button id="uploadBtn" class="ml-2 bg-blue-500 text-white px-4 py-2 rounded">Subir</button>
+  <p id="status" class="mt-2"></p>
+  <img id="preview" style="max-width:300px; display:none; margin-top:10px;" />
+</section>
+
+<script>
+  const fileInput = document.getElementById("fileInput");
+  const uploadBtn = document.getElementById("uploadBtn");
+  const status = document.getElementById("status");
+  const preview = document.getElementById("preview");
+
+  uploadBtn.addEventListener("click", async () => {
+    const file = fileInput.files[0];
+    if (!file) {
+      status.textContent = "Selecciona un archivo primero.";
+      return;
+    }
+
+    status.textContent = "Generando URL firmada... ⏳";
+
+    try {
+      // 1️⃣ Pedimos al backend la signed URL
+      const res = await fetch("https://storage-r2.vercel.app/generate-upload-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileType: file.type, fileName: file.name })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error generando URL");
+
+      status.textContent = "Subiendo archivo a R2... 🚀";
+
+      // 2️⃣ Subimos directamente a R2 usando la signed URL
+      const uploadRes = await fetch(data.signedUrl, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": file.type }
+      });
+
+      if (!uploadRes.ok) throw new Error("Error subiendo archivo");
+
+      status.textContent = "✅ Archivo subido con éxito!";
+      preview.src = data.fileUrl;
+      preview.style.display = "block";
+    } catch (err) {
+      console.error(err);
+      status.textContent = err.message;
+    }
+  });
+</script>
